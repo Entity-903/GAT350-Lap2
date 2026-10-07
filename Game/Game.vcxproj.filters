@@ -29,6 +29,9 @@
     <Filter Include="Assets\SpriteGame\Tilemaps">
       <UniqueIdentifier>{8ac8fb6c-145d-491a-a62a-46335b569b60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\Shaders">
+      <UniqueIdentifier>{c6f04eb3-dfab-4185-a879-88777eb16f09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
