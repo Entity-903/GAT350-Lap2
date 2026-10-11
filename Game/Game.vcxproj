@@ -186,6 +186,14 @@
     <None Include="..\Build\Assets\SpriteGame\Scenes\scene.json" />
     <None Include="..\Build\Assets\SpriteGame\Tilemaps\world.json" />
   </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\Shaders\color.frag.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="..\Shaders\position.vert.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

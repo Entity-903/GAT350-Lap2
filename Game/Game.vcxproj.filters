@@ -53,4 +53,12 @@
       <Filter>Assets\SpriteGame\Scenes</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\Shaders\position.vert.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Shaders\color.frag.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </CustomBuild>
+  </ItemGroup>
 </Project>

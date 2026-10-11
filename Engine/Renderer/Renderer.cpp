@@ -2,6 +2,8 @@
 #include "Renderer.h"
 #include "Model.h"
 #include "Texture.h"
+#include "PipeLine.h"
+#include "VertexBuffer.h"
 
 #include "Math/Transform.h"
 #include "Math/MathUtils.h"
@@ -71,24 +73,31 @@ namespace nu
             // configure the color target attachments (This handles clearing the screen)
             SDL_GPUColorTargetInfo color_target_info{};
             color_target_info.texture = swapchainTexture;
-            color_target_info.clear_color = SDL_FColor{ 1.0f, 0.0f, 0.0f, 1.0f };
+            color_target_info.clear_color = SDL_FColor{ 0.0f, 0.0f, 0.0f, 1.0f };
             color_target_info.load_op = SDL_GPU_LOADOP_CLEAR;
             color_target_info.store_op = SDL_GPU_STOREOP_STORE;
 
             m_gpuRenderPass = SDL_BeginGPURenderPass(m_gpuCommandBuffer, &color_target_info, 1, nullptr);
-            SDL_EndGPURenderPass(m_gpuRenderPass);
         }
 
         return true;
     }
 
-    bool Renderer::EndFrame() const
+    bool Renderer::EndFrame()
     {
+        if (m_gpuRenderPass)
+        {
+            SDL_EndGPURenderPass(m_gpuRenderPass);
+            m_gpuRenderPass = nullptr;
+        }
+
         if (!SDL_SubmitGPUCommandBuffer(m_gpuCommandBuffer))
         {
             std::cerr << "Could not submit command buffer: " << SDL_GetError() << std::endl;
             return false;
         }
+
+        m_gpuCommandBuffer = nullptr;
 
         return true;
     }
@@ -208,5 +217,43 @@ namespace nu
 
         // https://wiki.libsdl.org/SDL3/SDL_RenderTexture
         SDL_RenderTextureRotated(m_renderer, texture.m_texture, &sourceRect, &destRect, angle, NULL, (flipH) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
+    }
+
+    void Renderer::SetPipeline(const Pipeline& pipeline)
+    {
+        // bind the pipeline to the current render pass with SDL_BindGPUGraphicsPipeline(renderPass, gpuPipeline)
+        SDL_BindGPUGraphicsPipeline(m_gpuRenderPass, pipeline.m_gpuPipeline);
+        // the pipeline sets the shaders and render settings used by the draw calls that follow
+        // use pipeline.GetGPUPipeline() to get the sdl pipeline
+    }
+
+    void Renderer::SetVertexBuffer(const VertexBuffer& vertexBuffer)
+    {
+        // describe which buffer to bind and where to start reading from
+        SDL_GPUBufferBinding binding{
+            .buffer = vertexBuffer.m_gpuBuffer, // todo: the vertex buffer's gpu buffer
+            .offset = 0   // start reading at the beginning of the buffer
+        };
+
+        // bind the vertex buffer to the current render pass with SDL_BindGPUVertexBuffers()
+        // the draw calls that follow read their vertices from this buffer
+        // parameters:
+        //   render pass   - the current render pass (m_renderPass)
+        //   first slot    - 0, matches the buffer slot set in Pipeline::AddVertexBuffer()
+        //   bindings      - pointer to the binding above
+        //   binding count - 1, we are binding one buffer
+        SDL_BindGPUVertexBuffers(m_gpuRenderPass, 0, &binding, 1);
+    }
+
+    void Renderer::Draw(uint32_t vertexCount)
+    {
+        // draw using the currently bound pipeline and vertex buffer with SDL_DrawGPUPrimitives()
+        // parameters:
+        //   render pass    - the current render pass (m_renderPass)
+        //   vertex count   - the number of vertices to draw (vertexCount)
+        //   instance count - 1, draw one copy (more than 1 is used for instancing)
+        //   first vertex   - 0, start at the first vertex in the buffer
+        //   first instance - 0, start at the first instance
+        SDL_DrawGPUPrimitives(m_gpuRenderPass, vertexCount, 1, 0, 0);
     }
 }
