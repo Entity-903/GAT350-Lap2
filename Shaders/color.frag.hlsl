@@ -1,5 +1,12 @@
+cbuffer Uniforms :
+    register(b0, space3)
+{
+    float4 color;
+}
+
 struct Input
 {
+    float4 Color : TEXCOORD0;
 };
 
 struct Output
@@ -10,7 +17,7 @@ struct Output
 Output main(Input input)
 {
 	Output output;
-	output.Color = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    output.Color = color; //float4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	return output;
 }
