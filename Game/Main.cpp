@@ -4,6 +4,10 @@
 #include "Renderer/VertexBuffer.h"
 #include "Renderer/Pipeline.h"
 
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "Resources/ResourceManager.h"
 
 using namespace nu;
@@ -19,13 +23,19 @@ struct Vertex
     Color4 color;
 };
 
-
 std::vector<Vertex> vertices =
 {
     Vertex{ Vector3{ -0.5f, -0.5f, 0.0f }, Color4{ 1.0f, 1.0f, 1.0f, 0 } }, // Bottom-Left
     Vertex{ Vector3{  0.5f, -0.5f, 0.0f }, Color4{ 0.5f, 0.5f, 0.5f, 0 } }, // Bottom-Right
     Vertex{ Vector3{  0.0f,  0.5f, 0.0f }, Color4{ 0.0f, 0.0f, 0.0f, 0 } }, // Top-Middle
 };
+
+struct vertexUniform
+{
+    glm::mat4 model;
+};
+
+vertexUniform uniform;
 
 int main()
 {
@@ -79,13 +89,14 @@ int main()
         }
 
         // ENGINE
+
         Engine::Instance().Update();
         float dt = Engine::Instance().GetTime().GetDeltaTime();
 
-        scale = abs(sin(Engine::Instance().GetTime().GetTime()));
-        color.r = sin(Engine::Instance().GetTime().GetTime() * 3.0f) * 0.25f;
-        color.g = sin(Engine::Instance().GetTime().GetTime() * 3.0f) * 0.25f;
-        color.b = sin(Engine::Instance().GetTime().GetTime() * 3.0f) * 0.25f;
+        uniform.model = glm::mat4(1.0f);
+        uniform.model = glm::rotate(uniform.model, glm::radians(Engine::Instance().GetTime().GetTime() * 2700.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // 5400.0f, 10800.0f
+        uniform.model = glm::scale(uniform.model, glm::vec3(0.5f, 0.5f, 0.5f));
+        uniform.model = glm::translate(uniform.model, glm::vec3(0.5f, 0.0f, 0.0f));
 
         // RENDER
         Engine::Instance().GetRenderer().BeginFrame();
@@ -94,7 +105,7 @@ int main()
 
         Engine::Instance().GetRenderer().SetPipeline(*pipeline);
         Engine::Instance().GetRenderer().SetVertexBuffer(*vb);
-        Engine::Instance().GetRenderer().SetVertexUniform(0, &scale, sizeof(scale));
+        Engine::Instance().GetRenderer().SetVertexUniform(0, &uniform, sizeof(uniform));
         Engine::Instance().GetRenderer().SetFragmentUniform(0, &color, sizeof(color));
 
         Engine::Instance().GetRenderer().Draw(vb->GetVertexCount());
