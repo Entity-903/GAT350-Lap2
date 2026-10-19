@@ -21,6 +21,7 @@ namespace nu
             SDL_Window* window);
 
         void AddVertexBuffer(uint32_t pitch);
+        //void AddIndexBuffer(uint32_t pitch);
         void AddVertexAttribute(uint32_t location, SDL_GPUVertexElementFormat format, uint32_t offset);
 
         friend class Renderer;

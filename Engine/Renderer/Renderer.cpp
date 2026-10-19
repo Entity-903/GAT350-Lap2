@@ -242,7 +242,32 @@ namespace nu
         //   first slot    - 0, matches the buffer slot set in Pipeline::AddVertexBuffer()
         //   bindings      - pointer to the binding above
         //   binding count - 1, we are binding one buffer
-        SDL_BindGPUVertexBuffers(m_gpuRenderPass, 0, &binding, 1);
+        SDL_BindGPUVertexBuffers(
+            m_gpuRenderPass, 
+            0, 
+            &binding, 
+            1);
+    }
+
+    void Renderer::SetIndexBuffer(const IndexBuffer& indexBuffer)
+    {
+        // describe which buffer to bind and where to start reading from
+        SDL_GPUBufferBinding binding{
+            .buffer = indexBuffer.m_gpuBuffer, // todo: the vertex buffer's gpu buffer
+            .offset = 0   // start reading at the beginning of the buffer
+        };
+
+        // bind the vertex buffer to the current render pass with SDL_BindGPUVertexBuffers()
+        // the draw calls that follow read their vertices from this buffer
+        // parameters:
+        //   render pass   - the current render pass (m_renderPass)
+        //   first slot    - 0, matches the buffer slot set in Pipeline::AddVertexBuffer()
+        //   bindings      - pointer to the binding above
+        //   binding count - 1, we are binding one buffer
+        SDL_BindGPUVertexBuffers(
+            m_gpuRenderPass, 
+            &binding, 
+            SDL_GPU_INDEXELEMENTSIZE_32BIT);
     }
 
     void Renderer::Draw(uint32_t vertexCount)
@@ -256,10 +281,29 @@ namespace nu
         //   first instance - 0, start at the first instance
         SDL_DrawGPUPrimitives(m_gpuRenderPass, vertexCount, 1, 0, 0);
     }
+
+    void Renderer::DrawIndex(const IndexBuffer& indexBuffer)
+    {
+        SDL_DrawGPUIndexedPrimitives(
+            m_gpuRenderPass,
+            indexBuffer.GetIndexCount(),
+            1,
+            0,
+            0,
+            0
+        );
+    }
+
+    void Renderer::SetIndexUniform(uint32_t slot, const void* data, uint32_t size)
+    {
+        SDL_PushGPUVertexUniformData(m_gpuCommandBuffer, slot, data, size);
+    }
+
     void Renderer::SetVertexUniform(uint32_t slot, const void* data, uint32_t size)
     {
         SDL_PushGPUVertexUniformData(m_gpuCommandBuffer, slot, data, size);
     }
+
     void Renderer::SetFragmentUniform(uint32_t slot, const void* data, uint32_t size)
     {
         SDL_PushGPUFragmentUniformData(m_gpuCommandBuffer, slot, data, size);

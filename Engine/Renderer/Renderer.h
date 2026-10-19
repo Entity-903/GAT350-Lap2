@@ -41,14 +41,18 @@ namespace nu
 
 		void SetPipeline(const class Pipeline& pipeline);
 		void SetVertexBuffer(const class VertexBuffer& vertexBuffer);
-		void Draw(uint32_t vertexCount);
+		void SetIndexBuffer(const class IndexBuffer& indexBuffer);
+		void Draw(uint32_t indexCount);
+		void DrawIndex(const class IndexBuffer& indexBuffer);
 
+		void SetIndexUniform(uint32_t slot, const void* data, uint32_t size);
 		void SetVertexUniform(uint32_t slot, const void* data, uint32_t size);
 		void SetFragmentUniform(uint32_t slot, const void* data, uint32_t size);
 
 		friend class TextRenderer;
 		friend class Texture;
-		friend class shader;
+		friend class Shader;
+		friend class IndexBuffer;
 
 	private:
 		SDL_Window* m_window = nullptr;
