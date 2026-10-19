@@ -24,5 +24,11 @@
     <FxCompile Include="position.vert.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="unlit.frag.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="unlit.vert.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

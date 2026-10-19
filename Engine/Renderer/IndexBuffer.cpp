@@ -139,7 +139,8 @@ namespace nu
 		}
 
 		// the transfer buffer is no longer needed,
-		// release it with SDL_ReleaseGPUTransferBuffer(device, transferBuffer)
+		// release it with 
+		SDL_ReleaseGPUTransferBuffer(m_gpuDevice, transferBuffer);
 
 		// index buffer created and uploaded successfully
 		return true;

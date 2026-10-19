@@ -6,7 +6,7 @@ cbuffer Uniforms :
 
 struct Input
 {
-    float4 Color : TEXCOORD0;
+    float4 texcoord : TEXCOORD0;
 };
 
 struct Output

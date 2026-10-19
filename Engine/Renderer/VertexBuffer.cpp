@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "IndexBuffer.h"
+#include "VertexBuffer.h"
 #include "Renderer.h"
 
 namespace nu
 {
-	IndexBuffer::~IndexBuffer()
+	VertexBuffer::~VertexBuffer()
 	{
 		// if both the gpu buffer and the gpu device are valid (not null),
 		// release the buffer with SDL_ReleaseGPUBuffer(device, buffer)
@@ -14,36 +14,36 @@ namespace nu
 		}
 	}
 
-	bool IndexBuffer::Create(uint32_t indexCount, uint32_t indexSize, const uint8_t* data, SDL_GPUDevice* gpuDevice)
+	bool VertexBuffer::Create(uint32_t vertexCount, uint32_t vertexSize, const uint8_t* data, const Renderer& renderer)
 	{
-		// store the index count in m_indexCount (needed later when drawing)
+		// store the vertex count in m_vertexCount (needed later when drawing)
 		// store the gpu device in m_gpuDevice so the destructor can release the buffer later
-		m_indexCount = indexCount;
+		m_vertexCount = vertexCount;
 		m_gpuDevice = renderer.m_gpuDevice;
 
-		// calculate the total size in bytes of all the indices (number of indices * size of one index)
-		uint32_t indicesSize = indexCount * indexSize;
+		// calculate the total size in bytes of all the indices (number of indices * size of one vertex)
+		uint32_t indicesSize = vertexCount * vertexSize;
 
-		// --- create the index buffer ---
+		// --- create the vertex buffer ---
 		// this buffer lives in gpu memory, the cpu can't write to it directly
 
-		// fill out the index buffer settings
-		SDL_GPUBufferCreateInfo indexBufferCreateInfo{
-			.usage = SDL_GPU_BUFFERUSAGE_VERTEX, // todo: this buffer holds index data (SDL_GPU_BUFFERUSAGE_...)
+		// fill out the vertex buffer settings
+		SDL_GPUBufferCreateInfo vertexBufferCreateInfo{
+			.usage = SDL_GPU_BUFFERUSAGE_VERTEX, // todo: this buffer holds vertex data (SDL_GPU_BUFFERUSAGE_...)
 			.size = indicesSize // todo: the total size in bytes of the indices
 		};
 
 		// create the buffer with SDL_CreateGPUBuffer(device, &createInfo) and store it in m_gpuBuffer
-		m_gpuBuffer = SDL_CreateGPUBuffer(m_gpuDevice, &indexBufferCreateInfo);
+		m_gpuBuffer = SDL_CreateGPUBuffer(m_gpuDevice, &vertexBufferCreateInfo);
 		if (m_gpuBuffer == nullptr)
 		{
-			std::cerr << "Could not create index buffer: " << SDL_GetError() << std::endl;
+			std::cerr << "Could not create vertex buffer: " << SDL_GetError() << std::endl;
 
 			return false;
 		}
 
 		// --- create the transfer buffer ---
-		// a transfer buffer is a staging area the cpu can write to, it is used to copy data into the index buffer
+		// a transfer buffer is a staging area the cpu can write to, it is used to copy data into the vertex buffer
 
 		// fill out the transfer buffer settings
 		SDL_GPUTransferBufferCreateInfo transferBufferCreateInfo{
@@ -57,13 +57,13 @@ namespace nu
 		{
 			std::cerr << "Could not create transfer buffer: " << SDL_GetError() << std::endl;
 
-			SDL_ReleaseGPUBuffer(gpuDevice, m_gpuBuffer);
+			SDL_ReleaseGPUBuffer(m_gpuDevice, m_gpuBuffer);
 			m_gpuBuffer = nullptr;
 
 			return false;
 		}
 
-		// --- copy the index data into the transfer buffer ---
+		// --- copy the vertex data into the transfer buffer ---
 
 		// map the transfer buffer with SDL_MapGPUTransferBuffer(device, transferBuffer, false)
 		// mapping gives the cpu a pointer it can write to
@@ -73,31 +73,31 @@ namespace nu
 		{
 			std::cerr << "Could not map transfer buffer: " << SDL_GetError() << std::endl;
 
-			SDL_ReleaseGPUTransferBuffer(gpuDevice, transferBuffer);
-			SDL_ReleaseGPUBuffer(gpuDevice, m_gpuBuffer);
+			SDL_ReleaseGPUTransferBuffer(m_gpuDevice, transferBuffer);
+			SDL_ReleaseGPUBuffer(m_gpuDevice, m_gpuBuffer);
 			m_gpuBuffer = nullptr;
 
 			return false;
 		}
 
-		// copy the index data into transferData with memcpy(destination, source, size)
+		// copy the vertex data into transferData with memcpy(destination, source, size)
 		memcpy(transferData, data, indicesSize);
 
 		// unmap the transfer buffer with SDL_UnmapGPUTransferBuffer(device, transferBuffer)
 		// the cpu is done writing, so the gpu can now use it
 		SDL_UnmapGPUTransferBuffer(m_gpuDevice, transferBuffer);
 
-		// --- upload the transfer buffer to the index buffer ---
+		// --- upload the transfer buffer to the vertex buffer ---
 		// the gpu does the copy, so it has to be recorded in a command buffer and submitted
 
 		// get a command buffer with SDL_AcquireGPUCommandBuffer(device)
-		SDL_GPUCommandBuffer* commandBuffer = SDL_AcquireGPUCommandBuffer(gpuDevice);
+		SDL_GPUCommandBuffer* commandBuffer = SDL_AcquireGPUCommandBuffer(m_gpuDevice);
 		if (commandBuffer == nullptr)
 		{
 			std::cerr << "Could not acquire GPU command buffer: " << SDL_GetError() << std::endl;
 
-			SDL_ReleaseGPUTransferBuffer(gpuDevice, transferBuffer);
-			SDL_ReleaseGPUBuffer(gpuDevice, m_gpuBuffer);
+			SDL_ReleaseGPUTransferBuffer(m_gpuDevice, transferBuffer);
+			SDL_ReleaseGPUBuffer(m_gpuDevice, m_gpuBuffer);
 			m_gpuBuffer = nullptr;
 
 			return false;
@@ -113,9 +113,9 @@ namespace nu
 			.offset = 0
 		};
 
-		// where to copy to: the index buffer, starting at the beginning
+		// where to copy to: the vertex buffer, starting at the beginning
 		SDL_GPUBufferRegion bufferRegion{
-			.buffer = m_gpuBuffer, // todo: the index buffer
+			.buffer = m_gpuBuffer, // todo: the vertex buffer
 			.offset = 0,
 			.size = indicesSize // todo: the total size in bytes of the indices
 		};
@@ -139,9 +139,10 @@ namespace nu
 		}
 
 		// the transfer buffer is no longer needed,
-		// release it with SDL_ReleaseGPUTransferBuffer(device, transferBuffer)
+		// release it with 
+		SDL_ReleaseGPUTransferBuffer(m_gpuDevice, transferBuffer);
 
-		// index buffer created and uploaded successfully
+		// vertex buffer created and uploaded successfully
 		return true;
 	}
 }

@@ -53,7 +53,7 @@ namespace nu
 			// the render targets this pipeline draws into, uses the color target array from above
 			.target_info = SDL_GPUGraphicsPipelineTargetInfo{
 				.color_target_descriptions = colorTargetDescriptions.data(), // todo: pointer to colorTargetDescriptions
-				.num_color_targets = colorTargetDescriptions.size() // todo: number of color targets
+				.num_color_targets = (uint32_t)colorTargetDescriptions.size() // todo: number of color targets
 			}
 		};
 
@@ -64,7 +64,7 @@ namespace nu
 		// print an error with std::cerr that includes SDL_GetError() and return false
 		if (m_gpuPipeline == NULL)
 		{
-			std::cerr << SDL_GetError();
+			std::cerr << "Could not create pipeline!!!: " << SDL_GetError();
 			return false;
 		}
 

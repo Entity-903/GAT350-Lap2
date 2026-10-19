@@ -1,7 +1,7 @@
 cbuffer Uniforms :
     register(b0, space1)
 {
-    float4x4 model;
+    float4x4 mvp;
 }
 
 struct Input

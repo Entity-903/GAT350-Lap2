@@ -176,18 +176,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Audio\Audio.h" />
-    <ClInclude Include="Components\Box2DPhysicsComponent.h" />
-    <ClInclude Include="Components\CircleColliderComponent.h" />
     <ClInclude Include="Components\ColliderComponent.h" />
     <ClInclude Include="Components\Component.h" />
     <ClInclude Include="Components\PhysicsComponent.h" />
     <ClInclude Include="Components\RendererComponent.h" />
-    <ClInclude Include="Components\RigidBodyPhysicsComponent.h" />
-    <ClInclude Include="Components\SpriteAnimationRendererComponent.h" />
-    <ClInclude Include="Components\SpriteAnimatorRendererComponent.h" />
-    <ClInclude Include="Components\SpriteRendererComponent.h" />
-    <ClInclude Include="Components\TextRendererComponent.h" />
-    <ClInclude Include="Components\TilemapRendererComponent.h" />
     <ClInclude Include="Core\Factory.h" />
     <ClInclude Include="Core\File.h" />
     <ClInclude Include="Core\GameTime.h" />
@@ -206,8 +198,6 @@
     <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Math\Vector3.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Physics\Physics.h" />
-    <ClInclude Include="Physics\PhysicsBody.h" />
     <ClInclude Include="Renderer\Font.h" />
     <ClInclude Include="Renderer\IndexBuffer.h" />
     <ClInclude Include="Renderer\Mesh.h" />
@@ -227,15 +217,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Audio\Audio.cpp" />
-    <ClCompile Include="Components\Box2DPhysicsComponent.cpp" />
-    <ClCompile Include="Components\CircleColliderComponent.cpp" />
     <ClCompile Include="Components\PhysicsComponent.cpp" />
-    <ClCompile Include="Components\RigidBodyPhysicsComponent.cpp" />
-    <ClCompile Include="Components\SpriteAnimationRendererComponent.cpp" />
-    <ClCompile Include="Components\SpriteAnimatorRendererComponent.cpp" />
-    <ClCompile Include="Components\SpriteRendererComponent.cpp" />
-    <ClCompile Include="Components\TextRendererComponentcpp.cpp" />
-    <ClCompile Include="Components\TilemapRendererComponent.cpp" />
     <ClCompile Include="Core\File.cpp" />
     <ClCompile Include="Core\GameTime.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -249,8 +231,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Physics\Physics.cpp" />
-    <ClCompile Include="Physics\PhysicsBody.cpp" />
     <ClCompile Include="Renderer\Font.cpp" />
     <ClCompile Include="Renderer\IndexBuffer.cpp" />
     <ClCompile Include="Renderer\Mesh.cpp" />

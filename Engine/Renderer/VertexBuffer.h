@@ -4,29 +4,29 @@
 
 namespace nu
 {
-	class IndexBuffer : public Resource
+	class VertexBuffer : public Resource
 	{
 	public:
-		~IndexBuffer();
+		~VertexBuffer();
 
-		bool Create(uint32_t indexCount, uint32_t indexSize, const uint8_t* data, SDL_GPUDevice* gpuDevice);
+		bool Create(uint32_t vertexCount, uint32_t vertexSize, const uint8_t* data, const class Renderer& renderer);
 		
 		template<typename T>
 		bool Create(const std::vector<T>& indices, const class Renderer& renderer);
 		
-		uint32_t GetIndexCount() const { return m_indexCount; }
+		uint32_t GetVertexCount() const { return m_vertexCount; }
 
 		friend class Renderer;
 
 	private:
-		uint32_t m_indexCount{ 0 };
+		uint32_t m_vertexCount{ 0 };
 
 		SDL_GPUDevice* m_gpuDevice = nullptr;
 		SDL_GPUBuffer* m_gpuBuffer = nullptr;
 	};
 
 	template<typename T>
-	inline bool IndexBuffer::Create(const std::vector<T>& indices, const class Renderer& renderer)
+	inline bool VertexBuffer::Create(const std::vector<T>& indices, const class Renderer& renderer)
 	{
 		return Create(
 			static_cast<uint32_t>(indices.size()),

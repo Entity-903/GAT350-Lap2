@@ -10,7 +10,10 @@ namespace nu
 	public:
 		virtual ~Shader();
 
-		bool Load(const std::string& filename, class Renderer& renderer, uint32_t uniformCount = 0);
+		bool Load(const std::string& filename, 
+			class Renderer& renderer, 
+			uint32_t uniformCount = 0,
+			uint32_t samplerCount = 0);
 
 		friend class Pipeline;
 
