@@ -5,6 +5,7 @@
 #include "Renderer/IndexBuffer.h"
 #include "Renderer/VertexBuffer.h"
 #include "Renderer/Pipeline.h"
+#include "Renderer/Model.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
@@ -49,25 +50,42 @@ int main()
     auto ib = std::make_shared<IndexBuffer>();
     ib->Create(indices, Engine::Instance().GetRenderer());
 
-    auto vshader = Resources().Get<nu::Shader>("shaders/position.vert", Engine::Instance().GetRenderer(), 1);
-    auto fshader = Resources().Get<nu::Shader>("shaders/color.frag", Engine::Instance().GetRenderer(), 1);
+    auto model = Resources().Get<Model>("models/suzanne.obj", Engine::Instance().GetRenderer());
+
+    auto vshader = Resources().Get<nu::Shader>("shaders/unlit.vert", Engine::Instance().GetRenderer(), 1);
+    auto fshader = Resources().Get<nu::Shader>("shaders/unlit.frag", Engine::Instance().GetRenderer(), 1);
 
     auto pipeline = std::make_shared<Pipeline>();
-    pipeline->AddVertexBuffer(sizeof(Vertex));
-    // Position
-    pipeline->AddVertexAttribute(
-        0,
-        SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-        offsetof(Vertex, position));
-    // Color
-    pipeline->AddVertexAttribute(
-        1,
-        SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-        offsetof(Vertex, color));
+
+    pipeline->AddVertexBuffer(sizeof(Model::Vertex));
+    pipeline->AddVertexAttribute(0, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(Model::Vertex, position));
+    pipeline->AddVertexAttribute(1, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2, offsetof(Model::Vertex, texcoord));
+    pipeline->AddVertexAttribute(2, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(Model::Vertex, normal));
+    pipeline->AddVertexAttribute(3, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(Model::Vertex, tangent));
 
     pipeline->Create(*vshader.get(), *fshader.get(),
         Engine::Instance().GetRenderer().GetGPUDevice(),
         Engine::Instance().GetRenderer().GetWindow());
+
+    //auto vshader = Resources().Get<nu::Shader>("shaders/position.vert", Engine::Instance().GetRenderer(), 1);
+    //auto fshader = Resources().Get<nu::Shader>("shaders/color.frag", Engine::Instance().GetRenderer(), 1);
+
+    //auto pipeline = std::make_shared<Pipeline>();
+    //pipeline->AddVertexBuffer(sizeof(Vertex));
+    //// Position
+    //pipeline->AddVertexAttribute(
+    //    0,
+    //    SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
+    //    offsetof(Vertex, position));
+    //// Color
+    //pipeline->AddVertexAttribute(
+    //    1,
+    //    SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+    //    offsetof(Vertex, color));
+
+    //pipeline->Create(*vshader.get(), *fshader.get(),
+    //    Engine::Instance().GetRenderer().GetGPUDevice(),
+    //    Engine::Instance().GetRenderer().GetWindow());
 
     Color4 color = { 1, 1, 1, 1 };
     struct vertexUniform
@@ -132,12 +150,10 @@ int main()
         Engine::Instance().GetRenderer().BeginFrame();
 
         Engine::Instance().GetRenderer().SetPipeline(*pipeline);
-        Engine::Instance().GetRenderer().SetVertexBuffer(*vb);
-        Engine::Instance().GetRenderer().SetIndexBuffer(*ib);
-        Engine::Instance().GetRenderer().SetIndexUniform(0, &uniform, sizeof(uniform));
+        Engine::Instance().GetRenderer().SetVertexUniform(0, &uniform, sizeof(uniform));
         Engine::Instance().GetRenderer().SetFragmentUniform(0, &color, sizeof(color));
 
-        Engine::Instance().GetRenderer().DrawIndex(*ib);
+        model->Draw(Engine::Instance().GetRenderer());
 
         Engine::Instance().GetRenderer().EndFrame();
     }// end while
