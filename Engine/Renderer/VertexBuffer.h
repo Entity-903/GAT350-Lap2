@@ -17,6 +17,7 @@ namespace nu
 		uint32_t GetVertexCount() const { return m_vertexCount; }
 
 		friend class Renderer;
+		friend class Model;
 
 	private:
 		uint32_t m_vertexCount{ 0 };
