@@ -49,8 +49,8 @@ int main()
     auto ib = std::make_shared<IndexBuffer>();
     ib->Create(indices, Engine::Instance().GetRenderer());
 
-    auto vshader = Resources().Get<nu::Shader>("shaders/unlit.vert", Engine::Instance().GetRenderer(), 1);
-    auto fshader = Resources().Get<nu::Shader>("shaders/unlit.frag", Engine::Instance().GetRenderer(), 1);
+    auto vshader = Resources().Get<nu::Shader>("shaders/position.vert", Engine::Instance().GetRenderer(), 1);
+    auto fshader = Resources().Get<nu::Shader>("shaders/color.frag", Engine::Instance().GetRenderer(), 1);
 
     auto pipeline = std::make_shared<Pipeline>();
     pipeline->AddVertexBuffer(sizeof(Vertex));
@@ -122,7 +122,6 @@ int main()
         auto view = glm::lookAtRH(glm::vec3{ 0,0,5 }, glm::vec3(0), glm::vec3{0, 1, 0});
 
         // PROJECTION MATRIX
-        // TODO: ensure this is the proper value of aspectRatio
         float aspectRatio = Engine::Instance().GetRenderer().GetWidth() / (float)Engine::Instance().GetRenderer().GetHeight();
         auto projection = glm::perspective(glm::radians(70.0f), aspectRatio, 0.01f, 20.0f);
 
@@ -138,7 +137,7 @@ int main()
         Engine::Instance().GetRenderer().SetIndexUniform(0, &uniform, sizeof(uniform));
         Engine::Instance().GetRenderer().SetFragmentUniform(0, &color, sizeof(color));
 
-        //Engine::Instance().GetRenderer().DrawIndex(*ib);
+        Engine::Instance().GetRenderer().DrawIndex(*ib);
 
         Engine::Instance().GetRenderer().EndFrame();
     }// end while
