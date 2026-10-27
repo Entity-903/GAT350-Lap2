@@ -9,7 +9,6 @@ cbuffer Uniforms : register(b0, space3)
 struct Input
 {
     float2 texcoord : TEXCOORD0;
-    float4 color : TEXCOORD1;
 };
 
 struct Output
@@ -20,8 +19,8 @@ struct Output
 Output main(Input input)
 {
     Output output;
-    u_texture.Sample(u_sampler, input.texcoord) * input.color;
+    output.color = u_texture.Sample(u_sampler, input.texcoord);
 
-        return output;
+    return output;
 }
 		
