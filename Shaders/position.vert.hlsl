@@ -13,14 +13,14 @@ struct Input
 struct Output
 {
     float4 Position : SV_Position;
-    float4 color : TEXCOORD0;
+    float4 Color : TEXCOORD0;
 };
 
 Output main(Input input)
 {
     Output output;
     output.Position = mul(mvp, float4(input.position, 1.0f));
-    output.color = input.color;
+    output.Color = input.color;
 
     return output;
 }

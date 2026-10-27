@@ -16,25 +16,6 @@
 
 using namespace nu;
 
-struct Color4
-{
-    float r, g, b, a;
-};
-
-struct Vertex
-{
-    Vector3 position;
-    Color4 color;
-};
-
-std::vector<Vertex> vertices =
-{
-    { Vector3{ -0.5f, -0.5f, 0.0f }, Color4{ 1.0f, 1.0f, 1.0f, 0 } }, // Bottom-Left
-    { Vector3{  0.5f, -0.5f, 0.0f }, Color4{ 0.0f, 0.0f, 0.0f, 0 } }, // Bottom-Right
-    { Vector3{  0.5f,  0.5f, 0.0f }, Color4{ 1.0f, 1.0f, 1.0f, 0 } }, // Top-Right
-    { Vector3{ -0.5f,  0.5f, 0.0f }, Color4{ 0.0f, 0.0f, 0.0f, 0 } }, // Top-Left
-};
-
 std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
 
 int main()
@@ -44,13 +25,7 @@ int main()
     // INITIALIZATION
     Engine::Instance().Initialize();
 
-    auto vb = std::make_shared<VertexBuffer>();
-    vb->Create(vertices, Engine::Instance().GetRenderer());
-
-    auto ib = std::make_shared<IndexBuffer>();
-    ib->Create(indices, Engine::Instance().GetRenderer());
-
-    auto model = Resources().Get<Model>("models/suzanne.obj", Engine::Instance().GetRenderer());
+    auto model = Resources().Get<Model>("models/sphere.obj", Engine::Instance().GetRenderer());
 
     auto vshader = Resources().Get<nu::Shader>("shaders/unlit.vert", Engine::Instance().GetRenderer(), 1);
     auto fshader = Resources().Get<nu::Shader>("shaders/unlit.frag", Engine::Instance().GetRenderer(), 1);
@@ -63,31 +38,14 @@ int main()
     pipeline->AddVertexAttribute(2, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(Model::Vertex, normal));
     pipeline->AddVertexAttribute(3, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(Model::Vertex, tangent));
 
+    SDL_GPUDevice* device = Engine::Instance().GetRenderer().GetGPUDevice();
+    SDL_Window* window = Engine::Instance().GetRenderer().GetWindow();
+
     pipeline->Create(*vshader.get(), *fshader.get(),
-        Engine::Instance().GetRenderer().GetGPUDevice(),
-        Engine::Instance().GetRenderer().GetWindow());
+        device,
+        window);
 
-    //auto vshader = Resources().Get<nu::Shader>("shaders/position.vert", Engine::Instance().GetRenderer(), 1);
-    //auto fshader = Resources().Get<nu::Shader>("shaders/color.frag", Engine::Instance().GetRenderer(), 1);
-
-    //auto pipeline = std::make_shared<Pipeline>();
-    //pipeline->AddVertexBuffer(sizeof(Vertex));
-    //// Position
-    //pipeline->AddVertexAttribute(
-    //    0,
-    //    SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-    //    offsetof(Vertex, position));
-    //// Color
-    //pipeline->AddVertexAttribute(
-    //    1,
-    //    SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-    //    offsetof(Vertex, color));
-
-    //pipeline->Create(*vshader.get(), *fshader.get(),
-    //    Engine::Instance().GetRenderer().GetGPUDevice(),
-    //    Engine::Instance().GetRenderer().GetWindow());
-
-    Color4 color = { 1, 1, 1, 1 };
+    glm::vec4 color = { 1, 1, 1, 1 };
     struct vertexUniform
     {
         glm::mat4 mvp;

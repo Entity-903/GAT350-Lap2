@@ -46,7 +46,7 @@ namespace nu
 			// controls how triangles are turned into pixels
 			.rasterizer_state = SDL_GPURasterizerState{
 				.fill_mode = SDL_GPU_FILLMODE_FILL, // todo: fill the triangles solid (SDL_GPU_FILLMODE_...)
-				.cull_mode = SDL_GPU_CULLMODE_NONE, // todo: skip drawing back-facing triangles (SDL_GPU_CULLMODE_...)
+				.cull_mode = SDL_GPU_CULLMODE_BACK, // todo: skip drawing back-facing triangles (SDL_GPU_CULLMODE_...)
 				.front_face = SDL_GPU_FRONTFACE_COUNTER_CLOCKWISE // todo: front faces have counter clockwise winding (SDL_GPU_FRONTFACE_...)
 			},
 
@@ -85,11 +85,6 @@ namespace nu
 		// add the description to m_vertexBufferDescriptions
 		m_vertexBufferDescriptions.push_back(description);
 	}
-
-	//void Pipeline::AddIndexBuffer(uint32_t pitch)
-	//{
-	//	SDL_GPUIndexElementSize();
-	//}
 
 	void Pipeline::AddVertexAttribute(uint32_t location, SDL_GPUVertexElementFormat format, uint32_t offset)
 	{

@@ -26,9 +26,6 @@ namespace nu
 		void DrawFillRect(float x, float y, float w, float h) const;
 		void DrawRect(float x, float y, float w, float h) const;
 
-		void DrawTexture(const class Texture& texture, float x, float y, float angle = 0.0f, float scale = 1.0f, bool flipH = false, const Vector2& origin = Vector2{ 0.5f, 0.5f }) const;
-		void DrawTexture(const class Texture& texture, const struct Rect& source, float x, float y, float angle = 0.0f, float scale = 1.0f, bool flipH = false, const Vector2& origin = Vector2{ 0.5f, 0.5f }) const;
-
 		int GetWidth() const { return m_width; }
 		int GetHeight() const { return m_height; }
 
@@ -47,6 +44,8 @@ namespace nu
 		void SetIndexUniform(uint32_t slot, const void* data, uint32_t size);
 		void SetVertexUniform(uint32_t slot, const void* data, uint32_t size);
 		void SetFragmentUniform(uint32_t slot, const void* data, uint32_t size);
+
+		void SetFragmentTexture(uint32_t slot, const class Texture& texture);
 
 		friend class TextRenderer;
 		friend class Texture;
