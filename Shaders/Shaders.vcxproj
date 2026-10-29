@@ -93,6 +93,8 @@
     <FxCompile Include="position.vert.hlsl" />
     <FxCompile Include="unlit.frag.hlsl" />
     <FxCompile Include="unlit.vert.hlsl" />
+    <FxCompile Include="gouraud.vert.hlsl" />
+    <FxCompile Include="gouraud.frag.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

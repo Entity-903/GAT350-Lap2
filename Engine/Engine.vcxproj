@@ -240,9 +240,6 @@
     <ClCompile Include="Renderer\VertexBuffer.cpp" />
     <ClCompile Include="Serialization\Json.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="Resources\spot_diffuse.png" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

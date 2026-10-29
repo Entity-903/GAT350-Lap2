@@ -25,10 +25,11 @@ int main()
     // INITIALIZATION
     Engine::Instance().Initialize();
 
-    auto model = Resources().Get<Model>("models/sphere.obj", Engine::Instance().GetRenderer());
+    auto model   = Resources().Get<Model>("models/spot.obj", Engine::Instance().GetRenderer());
+    auto texture = Resources().Get<Texture>("textures/spot_diffuse.png", Engine::Instance().GetRenderer());
 
-    auto vshader = Resources().Get<nu::Shader>("shaders/unlit.vert", Engine::Instance().GetRenderer(), 1);
-    auto fshader = Resources().Get<nu::Shader>("shaders/unlit.frag", Engine::Instance().GetRenderer(), 1);
+    auto vshader = Resources().Get<nu::Shader>("shaders/gouraud.vert", Engine::Instance().GetRenderer(), 2);
+    auto fshader = Resources().Get<nu::Shader>("shaders/gouraud.frag", Engine::Instance().GetRenderer(), 1, 1);
 
     auto pipeline = std::make_shared<Pipeline>();
 
@@ -39,7 +40,7 @@ int main()
     pipeline->AddVertexAttribute(3, SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3, offsetof(Model::Vertex, tangent));
 
     SDL_GPUDevice* device = Engine::Instance().GetRenderer().GetGPUDevice();
-    SDL_Window* window = Engine::Instance().GetRenderer().GetWindow();
+    SDL_Window* window    = Engine::Instance().GetRenderer().GetWindow();
 
     pipeline->Create(*vshader.get(), *fshader.get(),
         device,
@@ -52,7 +53,7 @@ int main()
     };
 
     vertexUniform uniform;
-    glm::vec3 cameraPosition{ 0, 0, 5 };
+    glm::vec3 cameraPosition{ 0, 0, 2 };
 
     Transform transform;
 
@@ -91,11 +92,11 @@ int main()
         cameraPosition += direction * 4.0f * dt;
 
         // TRANSFORM
-        transform.rotation.z = time * 90;
+        transform.rotation.y = time * 90;
         //uniform.model = mxs * mxr * mxt;
 
         // VIEW MATRIX
-        auto view = glm::lookAtRH(glm::vec3{ 0,0,5 }, glm::vec3(0), glm::vec3{0, 1, 0});
+        auto view = glm::lookAtRH(glm::vec3{ 0,0,2 }, glm::vec3(0), glm::vec3{0, 1, 0});
 
         // PROJECTION MATRIX
         float aspectRatio = Engine::Instance().GetRenderer().GetWidth() / (float)Engine::Instance().GetRenderer().GetHeight();
@@ -110,6 +111,7 @@ int main()
         Engine::Instance().GetRenderer().SetPipeline(*pipeline);
         Engine::Instance().GetRenderer().SetVertexUniform(0, &uniform, sizeof(uniform));
         Engine::Instance().GetRenderer().SetFragmentUniform(0, &color, sizeof(color));
+        Engine::Instance().GetRenderer().SetFragmentTexture(0, *texture);
 
         model->Draw(Engine::Instance().GetRenderer());
 

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Texture.h"
+#include "Renderer.h"
 #include <SDL3_image/SDL_image.h>
 
 namespace nu
@@ -18,7 +19,7 @@ namespace nu
 	bool Texture::Load(const std::string& filename, const Renderer& renderer)
 	{
 		// store the gpu device in m_gpuDevice so the destructor can release the texture later
-		m_gpuDevice = m_gpuDevice;
+		m_gpuDevice = renderer.GetGPUDevice();
 
 		// --- load the image into a surface ---
 		// a surface is image data in cpu memory
@@ -118,7 +119,7 @@ namespace nu
 		}
 
 		// copy the pixel data into transferData with memcpy(destination, source, size)
-		memcpy(transferData, surface, transferBufferCreateInfo.size);
+		memcpy(transferData, surface->pixels, transferBufferCreateInfo.size);
 
 		// unmap the transfer buffer with SDL_UnmapGPUTransferBuffer(device, transferBuffer)
 		// the cpu is done writing, so the gpu can now use it
@@ -206,7 +207,7 @@ namespace nu
 		};
 
 		// create the sampler with SDL_CreateGPUSampler(device, &createInfo) and store it in m_gpuSampler
-		m_gpuSampler = nullptr; // todo
+		m_gpuSampler = SDL_CreateGPUSampler(m_gpuDevice, &samplerCreateInfo);
 		if (m_gpuSampler == nullptr)
 		{
 			std::cerr << "Could not create sampler: " << SDL_GetError() << std::endl;

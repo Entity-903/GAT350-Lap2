@@ -199,9 +199,4 @@
       <Filter>Renderer</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="Resources\spot_diffuse.png">
-      <Filter>Resources</Filter>
-    </Image>
-  </ItemGroup>
 </Project>

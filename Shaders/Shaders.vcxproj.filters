@@ -30,5 +30,7 @@
     <FxCompile Include="unlit.vert.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="gouraud.vert.hlsl" />
+    <FxCompile Include="gouraud.frag.hlsl" />
   </ItemGroup>
 </Project>
