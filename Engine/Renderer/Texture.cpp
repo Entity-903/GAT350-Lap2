@@ -84,7 +84,7 @@ namespace nu
 		// fill out the transfer buffer settings
 		SDL_GPUTransferBufferCreateInfo transferBufferCreateInfo{
 			.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD, // this buffer uploads data from the cpu to the gpu (SDL_GPU_TRANSFERBUFFERUSAGE_...)
-			.size = textureCreateInfo.width * textureCreateInfo.height // the total size in bytes of the image
+			.size = imageSize // the total size in bytes of the image
 		};
 
 		// create the transfer buffer with SDL_CreateGPUTransferBuffer(device, &createInfo)
@@ -119,7 +119,7 @@ namespace nu
 		}
 
 		// copy the pixel data into transferData with memcpy(destination, source, size)
-		memcpy(transferData, surface->pixels, transferBufferCreateInfo.size);
+		memcpy(transferData, surface->pixels, imageSize); // transferBufferCreateInfo.size -> imageSize
 
 		// unmap the transfer buffer with SDL_UnmapGPUTransferBuffer(device, transferBuffer)
 		// the cpu is done writing, so the gpu can now use it
@@ -198,11 +198,11 @@ namespace nu
 
 		// fill out the sampler settings
 		SDL_GPUSamplerCreateInfo samplerCreateInfo{
-			.min_filter = SDL_GPU_FILTER_LINEAR, // smooth when the texture is shrunk (SDL_GPU_FILTER_...)
-			.mag_filter = SDL_GPU_FILTER_NEAREST, // smooth when the texture is enlarged (SDL_GPU_FILTER_...)
-			.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_LINEAR,
+			.min_filter     = SDL_GPU_FILTER_LINEAR, // smooth when the texture is shrunk (SDL_GPU_FILTER_...)
+			.mag_filter     = SDL_GPU_FILTER_LINEAR, // smooth when the texture is enlarged (SDL_GPU_FILTER_...)
+			.mipmap_mode    = SDL_GPU_SAMPLERMIPMAPMODE_LINEAR,
 			.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT, // tile the texture horizontally (SDL_GPU_SAMPLERADDRESSMODE_...)
-			.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_MIRRORED_REPEAT, // tile the texture vertically (SDL_GPU_SAMPLERADDRESSMODE_...)
+			.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT, // tile the texture vertically (SDL_GPU_SAMPLERADDRESSMODE_...)
 			.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT
 		};
 

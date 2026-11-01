@@ -46,13 +46,32 @@ int main()
         device,
         window);
 
-    glm::vec4 color = { 1, 1, 1, 1 };
+
+    // UNIFORMS
+
+    glm::vec4 tint = { 1, 1, 1, 1 };
     struct vertexUniform
     {
         glm::mat4 mvp;
+        glm::mat4 model;
     };
-
     vertexUniform uniform;
+
+    //struct LightUniform {
+    //    glm::vec3 lightDirection;
+    //    float padding1;
+    //    glm::vec3 lightColor;
+    //    float lightIntensity;
+    //    glm::vec3 ambient;
+    //    float padding2;
+    //};
+    //LightUniform lightUniform{
+    //    .lightDirection{ 0, -1, 0 },
+    //    .lightColor{ 0, 0, 1 },
+    //    .lightIntensity{ 1 },
+    //    .ambient{ 0.1f, 0.1f, 0.1f }
+    //};
+
     glm::vec3 cameraPosition{ 0, 0, 2 };
 
     Transform transform;
@@ -86,13 +105,13 @@ int main()
         if (Engine::Instance().GetInput().GetKeyDown(SDL_SCANCODE_D)) direction.x = +1;
         if (Engine::Instance().GetInput().GetKeyDown(SDL_SCANCODE_E)) direction.y = -1;
         if (Engine::Instance().GetInput().GetKeyDown(SDL_SCANCODE_Q)) direction.y = +1;
-        if (Engine::Instance().GetInput().GetKeyDown(SDL_SCANCODE_S)) direction.y = +1;
-        if (Engine::Instance().GetInput().GetKeyDown(SDL_SCANCODE_W)) direction.y = -1; 
+        if (Engine::Instance().GetInput().GetKeyDown(SDL_SCANCODE_W)) direction.z = -1; 
+        if (Engine::Instance().GetInput().GetKeyDown(SDL_SCANCODE_S)) direction.z = +1;
 
         cameraPosition += direction * 4.0f * dt;
 
         // TRANSFORM
-        transform.rotation.y = time * 90;
+        transform.rotation.y = time * 45;
         //uniform.model = mxs * mxr * mxt;
 
         // VIEW MATRIX
@@ -110,7 +129,7 @@ int main()
 
         Engine::Instance().GetRenderer().SetPipeline(*pipeline);
         Engine::Instance().GetRenderer().SetVertexUniform(0, &uniform, sizeof(uniform));
-        Engine::Instance().GetRenderer().SetFragmentUniform(0, &color, sizeof(color));
+        Engine::Instance().GetRenderer().SetFragmentUniform(0, &tint, sizeof(tint));
         Engine::Instance().GetRenderer().SetFragmentTexture(0, *texture);
 
         model->Draw(Engine::Instance().GetRenderer());

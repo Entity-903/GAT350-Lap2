@@ -42,10 +42,10 @@ namespace nu
 		void DrawIndex(const class IndexBuffer& indexBuffer);
 
 		void SetIndexUniform(uint32_t slot, const void* data, uint32_t size);
-		void SetVertexUniform(uint32_t slot, const void* data, uint32_t size);
 		void SetFragmentUniform(uint32_t slot, const void* data, uint32_t size);
-
 		void SetFragmentTexture(uint32_t slot, const class Texture& texture);
+
+		void SetVertexUniform(uint32_t slot, const void* data, uint32_t size);
 
 		friend class TextRenderer;
 		friend class Texture;

@@ -35,14 +35,9 @@ namespace nu
 	{
 		for (const auto& mesh : m_meshes)
 		{
-			// todo: set the mesh vertex buffer on the renderer with renderer.SetVertexBuffer(vertexBuffer)
 			// the buffers are stored as unique_ptr, so dereference them with *
 			renderer.SetVertexBuffer(*mesh.vertexBuffer);
-
-			// todo: set the mesh index buffer on the renderer with renderer.SetIndexBuffer(indexBuffer)
 			renderer.SetIndexBuffer(*mesh.indexBuffer);
-
-			// todo: draw the mesh with renderer.DrawIndex(indexBuffer)
 			renderer.DrawIndex(*mesh.indexBuffer);
 		}
 	}
@@ -87,11 +82,9 @@ namespace nu
 				? glm::vec2{ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y }
 				: glm::vec2{ 0, 0 };
 
-			// todo: set vertex.normal from mesh->mNormals[i] (x, y, z)
 			// normals are optional, use (0, 0, 0) if mesh->mNormals is null (see texcoord above)
 			vertex.normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
 
-			// todo: set vertex.tangent from mesh->mTangents[i] (x, y, z)
 			// tangents are optional, use (0, 0, 0) if mesh->mTangents is null (see texcoord above)
 			vertex.tangent = (mesh->mTangents)
 				? glm::vec3{ mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z }
@@ -101,7 +94,6 @@ namespace nu
 		}
 
 		// get model indices
-		// each face is a triangle (aiProcess_Triangulate), each face stores the indices of its vertices
 		std::vector<uint32_t> indices;
 		indices.reserve(mesh->mNumFaces * 3);
 
@@ -110,7 +102,6 @@ namespace nu
 			const aiFace& face = mesh->mFaces[i];
 			for (unsigned int j = 0; j < face.mNumIndices; j++)
 			{
-				// todo: add the face index face.mIndices[j] to indices
 				indices.push_back(face.mIndices[j]);
 			}
 		}
@@ -134,7 +125,6 @@ namespace nu
 			return;
 		}
 
-		// todo: add newMesh to m_meshes
 		// Mesh holds unique_ptrs so it can't be copied, use std::move(newMesh)
 		m_meshes.push_back(std::move(newMesh));
 	}
